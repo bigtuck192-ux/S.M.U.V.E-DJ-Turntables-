@@ -1,0 +1,40 @@
+
+<main class="min-h-screen bg-gradient-to-b from-[#111827] to-[#0a0f1f] flex flex-col items-center justify-center p-4 font-sans text-slate-200">
+  <div class="w-full max-w-2xl bg-gradient-to-b from-[#1f2937] to-[#111827] border-2 border-[#00f6ff]/20 rounded-2xl shadow-2xl shadow-black/50 p-4 lg:p-6 flex flex-col gap-4 lg:gap-6">
+    
+    @if (audioContext && analyserNode) {
+      <!-- Deck A -->
+      <app-deck 
+        deckId="A" 
+        [audioContext]="audioContext"
+        [destinationNode]="analyserNode"
+        [highEQ]="highEQ()"
+        [midEQ]="midEQ()"
+        [lowEQ]="lowEQ()">
+      </app-deck>
+
+      <!-- Visualizer -->
+      <app-visualizer [analyserNode]="analyserNode"></app-visualizer>
+
+      <!-- Mixer -->
+      <app-mixer 
+        [(masterVolume)]="masterVolume"
+        [(highEQ)]="highEQ"
+        [(midEQ)]="midEQ"
+        [(lowEQ)]="lowEQ"
+        [isRecording]="isRecording()"
+        [recordingTime]="recordingTime()"
+        [savedMixUrl]="savedMixUrl()"
+        (startRecording)="startRecording()"
+        (stopRecording)="stopRecording()">
+      </app-mixer>
+    } @else {
+      <div class="text-center p-8">
+        <h2 class="text-2xl text-red-500 font-bold">Audio Context Not Available</h2>
+        <p class="text-slate-400 mt-2">This application requires a modern browser with Web Audio API support.</p>
+      </div>
+    }
+
+  </div>
+  <h1 class="text-sm font-light text-center tracking-widest text-slate-400 mt-4">Smuve Jeff Presents</h1>
+</main>

@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini DJ Turntables</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom styles for range inputs (sliders/faders) */
+    input[type="range"].vertical {
+      writing-mode: bt-lr; /* IE */
+      -webkit-appearance: slider-vertical; /* WebKit */
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+    /* Webkit (Chrome, Safari) */
+    input[type="range"]::-webkit-slider-runnable-track {
+      background: #1f2937; /* gray-800 */
+      height: 0.25rem;
+      border-radius: 0.25rem;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      margin-top: -6px;
+      background-color: #00f6ff; /* cyan */
+      height: 1.25rem;
+      width: 0.75rem;
+      border-radius: 3px;
+      border: 1px solid #9ca3af; /* gray-400 */
+      box-shadow: 0 0 5px #00f6ff, 0 0 10px #00f6ff;
+    }
+    input[type="range"].vertical::-webkit-slider-thumb {
+        margin-left: -5px;
+        width: 1.25rem;
+        height: 0.75rem;
+    }
+    input[type="range"].crossfader::-webkit-slider-thumb {
+        width: 1.5rem;
+        height: 2rem;
+        margin-top: -14px;
+        background-color: #4b5563; /* gray-600 */
+        border: 2px solid #00f6ff;
+    }
+    /* Firefox */
+    input[type="range"]::-moz-range-track {
+      background: #1f2937;
+      height: 0.25rem;
+      border-radius: 0.25rem;
+    }
+    input[type="range"]::-moz-range-thumb {
+      background-color: #00f6ff;
+      height: 1.25rem;
+      width: 0.75rem;
+      border-radius: 3px;
+      border: 1px solid #9ca3af;
+    }
+    /* VU Meter Styles */
+    .vu-meter {
+        background: linear-gradient(to right, #00f6ff, #ff00e5);
+        border: 2px solid #374151;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 8px rgba(0,0,0,0.7);
+    }
+    .vu-meter-face {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #0a0f1f;
+        opacity: 0.6;
+    }
+    .vu-meter-pivot {
+        position: absolute;
+        bottom: 4px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 8px;
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 50%;
+        z-index: 2;
+    }
+    .vu-needle {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        width: 2px;
+        height: 90%;
+        background: white;
+        transform-origin: bottom center;
+        transition: transform 0.1s ease-out;
+        z-index: 1;
+        box-shadow: 0 0 5px white, 0 0 10px white;
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "rxjs": "https://esm.sh/rxjs@^7.8.2?conditions=es2015",
+    "rxjs/operators": "https://esm.sh/rxjs@^7.8.2/operators?conditions=es2015",
+    "rxjs/ajax": "https://esm.sh/rxjs@^7.8.2/ajax?conditions=es2015",
+    "rxjs/webSocket": "https://esm.sh/rxjs@^7.8.2/webSocket?conditions=es2015",
+    "rxjs/testing": "https://esm.sh/rxjs@^7.8.2/testing?conditions=es2015",
+    "rxjs/fetch": "https://esm.sh/rxjs@^7.8.2/fetch?conditions=es2015",
+    "@angular/core": "https://next.esm.sh/@angular/core@^21.0.5?external=rxjs",
+    "@angular/common": "https://next.esm.sh/@angular/common@^21.0.5?external=rxjs",
+    "@angular/platform-browser": "https://next.esm.sh/@angular/platform-browser@^21.0.5?external=rxjs",
+    "@angular/compiler": "https://next.esm.sh/@angular/compiler@^21.0.5?external=rxjs"
+  }
+}
+</script>
+</head>
+<body class="bg-[#0a0f1f]">
+  <app-root></app-root>
+</body>
+</html>

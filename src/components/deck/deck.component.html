@@ -1,0 +1,113 @@
+
+<div class="flex-1 bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg p-4 flex flex-col gap-2 border-2 border-slate-700 shadow-inner min-w-0">
+  <!-- Top Info Bar -->
+  <div class="flex justify-between items-center gap-2">
+    <div class="text-2xl font-bold text-cyan-400">DECK {{ deckId() }}</div>
+     <div class="flex-grow text-sm text-right bg-slate-950/50 px-2 py-1 rounded text-cyan-400 border border-cyan-400/20">
+      PITCH: {{ pitch() > 0 ? '+' : '' }}{{ pitch().toFixed(1) }}%
+    </div>
+    <input type="file" accept=".mp3,audio/*" (change)="loadTrack($event)" #fileInput class="hidden">
+    <button (click)="fileInput.click()" class="text-sm font-bold bg-slate-700 hover:bg-cyan-600 border border-slate-600 text-cyan-300 px-4 py-1 rounded transition-colors flex-shrink-0">
+      LOAD
+    </button>
+  </div>
+
+  <!-- Track Name Display -->
+  <div class="text-center text-cyan-400 text-sm truncate transition-all h-5" [class.opacity-100]="trackName()" [class.opacity-0]="!trackName()">
+    {{ trackName() ?? 'NO TRACK' }}
+  </div>
+
+  <!-- Platter -->
+  <div 
+    class="aspect-square w-full bg-slate-900 rounded-full p-2 relative flex items-center justify-center border-4 border-slate-700 select-none"
+    [class.cursor-grab]="trackName()"
+    [class.active:cursor-grabbing]="trackName()"
+    [class.cursor-not-allowed]="!trackName()"
+    #platter 
+    (mousedown)="startScratch($event)">
+    <div 
+      class="w-full h-full bg-contain bg-no-repeat bg-center rounded-full"
+      [style.transform]="'rotate(' + recordAngle() + 'deg)'"
+      style="background-image: url('https://i.imgur.com/2Q5Z2zT.png');">
+    </div>
+     <div class="absolute w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center border-2 border-slate-600">
+        <div class="w-2 h-2 bg-cyan-400 rounded-full shadow-[0_0_5px_#00f6ff]"></div>
+    </div>
+    <div 
+        class="absolute w-2 h-2 rounded-full top-3 bg-cyan-400 transition-colors"
+        [class.animate-pulse]="isPlaying()"
+        [class.shadow-[0_0_8px_#00f6ff]]="isPlaying()">
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="flex gap-4 items-stretch mt-2">
+    <!-- Play/Pause & Range Buttons -->
+    <div class="flex flex-col gap-2 w-24">
+       <button 
+        (click)="togglePlay()" 
+        class="p-4 rounded-lg transition-all duration-200 border border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed" 
+        [disabled]="!trackName()"
+        [class]="isPlaying() ? 'bg-cyan-500 shadow-[0_0_15px_#00f6ff]' : 'bg-slate-700 hover:bg-cyan-600'">
+        @if (isPlaying()) {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 00-1 1v2a1 1 0 102 0V9a1 1 0 00-1-1zm6 0a1 1 0 00-1 1v2a1 1 0 102 0V9a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+        } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>
+        }
+      </button>
+      <div class="text-center text-xs font-semibold tracking-wider text-slate-400">
+        {{ isPlaying() ? 'PAUSE' : 'PLAY' }}
+      </div>
+      <button (click)="cyclePitchRange()" class="mt-auto text-sm font-bold bg-slate-700 hover:bg-cyan-600 border border-slate-600 text-cyan-300 py-2 px-2 rounded transition-colors">
+        RANGE ±{{ pitchRange() }}%
+     </button>
+    </div>
+    
+    <div class="flex-grow flex justify-center gap-4">
+      <!-- Volume Fader -->
+      <div class="flex flex-col items-center bg-slate-950/50 p-2 rounded-lg border border-slate-700 w-16">
+          <label class="text-xs font-semibold text-slate-400 mb-2">VOL</label>
+          <div class="relative w-full flex-grow flex justify-center">
+            <input 
+              type="range" 
+              min="0" 
+              max="100" 
+              step="1"
+              [value]="volume()"
+              (input)="volume.set($any($event.target).valueAsNumber)"
+              class="vertical h-full w-full"
+            >
+          </div>
+          <div class="text-sm mt-2">{{ volume() }}</div>
+      </div>
+
+      <!-- Pitch Slider & Bend Controls -->
+      <div 
+        class="flex-grow flex flex-col items-center bg-slate-950/50 p-2 rounded-lg border border-slate-700"
+        (dblclick)="resetPitch()"
+        title="Double-click to reset pitch to 0%"
+      >
+        <button (mousedown)="startPitchBend(-1)" (mouseup)="stopPitchBend()" (mouseleave)="stopPitchBend()" class="p-1 rounded-full transition-colors bg-slate-700 hover:bg-cyan-600 flex-shrink-0 w-8 h-8 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clip-rule="evenodd" /></svg>
+        </button>
+        <div class="relative w-full flex-grow my-2 flex justify-center">
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-0.5 bg-slate-600 rounded-full" title="0% mark"></div>
+          <input 
+            type="range" 
+            [min]="-pitchRange()" 
+            [max]="pitchRange()" 
+            step="0.1"
+            [value]="pitch()"
+            (input)="pitch.set($any($event.target).valueAsNumber)"
+            class="vertical h-full w-full"
+          >
+        </div>
+        <button (mousedown)="startPitchBend(1)" (mouseup)="stopPitchBend()" (mouseleave)="stopPitchBend()" class="p-1 rounded-full transition-colors bg-slate-700 hover:bg-cyan-600 flex-shrink-0 w-8 h-8 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <audio #audioPlayer class="hidden"></audio>
+</div>

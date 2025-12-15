@@ -1,0 +1,63 @@
+
+<div class="w-full bg-gradient-to-b from-slate-800 to-slate-900 rounded-lg p-4 flex flex-col gap-4 border-2 border-slate-700 shadow-inner">
+  <div class="text-center text-2xl font-bold text-slate-200 tracking-widest">MIXER</div>
+  
+  <div class="flex-grow flex justify-around gap-4 bg-slate-950/50 p-4 rounded-lg border border-slate-700">
+    <!-- Channel A EQ -->
+    <div class="flex flex-col items-center gap-4 w-full">
+      <div class="text-lg font-semibold text-cyan-400">CHANNEL EQ</div>
+      <div class="flex-grow flex items-center justify-center gap-6 lg:gap-12">
+        <div class="flex flex-col items-center gap-2">
+           <input type="range" min="0" max="100" [value]="highEQ()" (input)="highEQ.set($any($event.target).valueAsNumber)" class="vertical h-24">
+           <label class="text-xs text-slate-400 font-semibold">HI</label>
+        </div>
+         <div class="flex flex-col items-center gap-2">
+           <input type="range" min="0" max="100" [value]="midEQ()" (input)="midEQ.set($any($event.target).valueAsNumber)" class="vertical h-24">
+           <label class="text-xs text-slate-400 font-semibold">MID</label>
+        </div>
+         <div class="flex flex-col items-center gap-2">
+           <input type="range" min="0" max="100" [value]="lowEQ()" (input)="lowEQ.set($any($event.target).valueAsNumber)" class="vertical h-24">
+           <label class="text-xs text-slate-400 font-semibold">LOW</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-4">
+    <!-- Master Section -->
+    <div class="bg-slate-950/50 p-4 rounded-lg flex flex-col items-center gap-3 border border-slate-700">
+        <div class="text-center font-bold text-cyan-400 tracking-widest">MASTER</div>
+        <div class="vu-meter w-32 h-16">
+            <div class="vu-meter-face"></div>
+            <div class="vu-meter-pivot"></div>
+            <div class="vu-needle" [style.transform]="'rotate(' + vuAngle() + 'deg)'"></div>
+        </div>
+        <input type="range" min="0" max="100" [value]="masterVolume()" (input)="masterVolume.set($any($event.target).valueAsNumber)" class="w-full max-w-48">
+    </div>
+  </div>
+
+
+  <!-- Recording Panel -->
+  <div class="bg-slate-950/50 p-4 rounded-lg flex flex-col items-center gap-4 border border-slate-700">
+     <div class="text-center font-bold text-cyan-400 tracking-widest">RECORDING</div>
+     <div class="flex items-center justify-center gap-6 w-full">
+        <button (click)="toggleRecording()" class="flex items-center justify-center gap-2 w-28 h-12 bg-slate-700 hover:bg-red-700 border border-slate-600 rounded transition-colors text-lg font-bold">
+          @if(isRecording()){
+            <span class="w-4 h-4 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_#ef4444]"></span>
+            <span>STOP</span>
+          } @else {
+            <span class="w-4 h-4 bg-red-500 rounded-full"></span>
+            <span>REC</span>
+          }
+        </button>
+        <div class="text-4xl font-mono tracking-widest bg-black/30 px-4 py-1 rounded-md border border-slate-700 text-slate-300">
+            {{ formattedTime() }}
+        </div>
+     </div>
+     @if(savedMixUrl()){
+        <a [href]="savedMixUrl()" download="gemini-dj-mix.webm" class="mt-2 w-full text-center bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 px-4 rounded transition-colors">
+            SAVE MIX
+        </a>
+     }
+  </div>
+</div>
